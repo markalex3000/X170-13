@@ -61,11 +61,11 @@ void gen_code(vector<int>& the_code);
 //bool get_guess(vector<int>& the_guess);
 //int how_many_bulls(vector<int>& the_code, vector<int>& the_guess);
 //int how_many_cows(vector<int>& the_code, vector<int>& the_guess);
-void output_vector(vector<int> vi);
+void output_vector(vector<int>& vi);
 
 
 int main() {
-	vector<int> the_code;
+	vector<int> the_code{ -1,-1,-1, -1 };
 	vector<int> the_guess;
 	int bulls{ 0 };
 	int cows{ 0 };
@@ -74,6 +74,7 @@ int main() {
 	bool quiter{ false };
 
 	while (play_again) {
+		cout << "Generating the code...\n";
 		gen_code(the_code);
 
 		cout << "The code: ";
@@ -91,15 +92,14 @@ int main() {
 			output_vector(the_guess);
 			cout << " Results: " << bulls << " Bulls\t" << cows << " Cows\n";
 			quiter = yes_no("Guess again? ");
-*/		}
+	}*/	
 		play_again = yes_no("Play again? ");
 	}
 }
 
-void gen_code(vector<int>& the_code)
-{
+void gen_code(vector<int>& the_code) {
 	int temp{ -1 };
-	bool duplicate{ false };
+	bool duplicate{ true };
 
 	// generate computer code
 	random_device rd;   // non-deterministic generator  
@@ -107,22 +107,26 @@ void gen_code(vector<int>& the_code)
 	uniform_int_distribution<> dist(0, 9); // distribute results between 0 and 9 inclusive.  
 
 	for (int i = 0; i < 4; ++i) {
-		while (!duplicate) {
+		while (duplicate) {
+			duplicate = false;
 			temp = dist(gen);
 			for (int j = 0; j < i; ++j) {
 				if (temp == the_code[j]) duplicate = true;
 			}
 		}
+		the_code[i] = temp;
+		duplicate = true;
 	}
 	return;
 }
-
+/*
 int how_many_cows(vector<int>& the_code, vector<int>& the_guess)
 {
 	return 0;
 }
-
-void output_vector(vector<int> vi)
+*/
+void output_vector(vector<int>& vi)
 {
-	for (int i = 0; i < vi.size; ++i) cout << vi[i] << " ";
+	for (int i = 0; i < vi.size(); ++i) cout << vi[i] << " ";
 }
+
