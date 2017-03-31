@@ -23,6 +23,7 @@
 #include <cmath>
 #include <limits>
 #include <exception>
+#include <random>
 
 using namespace std;
 
@@ -57,9 +58,9 @@ bool yes_no(string s) {
 
 // function declarations
 void gen_code(vector<int>& the_code);
-bool get_guess(vector<int>& the_guess);
-int how_many_bulls(vector<int>& the_code, vector<int>& the_guess);
-int how_many_cows(vector<int>& the_code, vector<int>& the_guess);
+//bool get_guess(vector<int>& the_guess);
+//int how_many_bulls(vector<int>& the_code, vector<int>& the_guess);
+//int how_many_cows(vector<int>& the_code, vector<int>& the_guess);
 void output_vector(vector<int> vi);
 
 
@@ -75,7 +76,10 @@ int main() {
 	while (play_again) {
 		gen_code(the_code);
 
-		while (!quiter) {
+		cout << "The code: ";
+		output_vector(the_code);
+
+/*		while (!quiter) {
 			quiter = get_guess(the_guess);
 			bulls = how_many_bulls(the_code, the_guess);
 			cows = how_many_cows(the_code, the_guess);
@@ -87,13 +91,30 @@ int main() {
 			output_vector(the_guess);
 			cout << " Results: " << bulls << " Bulls\t" << cows << " Cows\n";
 			quiter = yes_no("Guess again? ");
-		}
+*/		}
 		play_again = yes_no("Play again? ");
 	}
 }
 
 void gen_code(vector<int>& the_code)
 {
+	int temp{ -1 };
+	bool duplicate{ false };
+
+	// generate computer code
+	random_device rd;   // non-deterministic generator  
+	mt19937 gen(rd());  // to seed mersenne twister.  
+	uniform_int_distribution<> dist(0, 9); // distribute results between 0 and 9 inclusive.  
+
+	for (int i = 0; i < 4; ++i) {
+		while (!duplicate) {
+			temp = dist(gen);
+			for (int j = 0; j < i; ++j) {
+				if (temp == the_code[j]) duplicate = true;
+			}
+		}
+	}
+	return;
 }
 
 int how_many_cows(vector<int>& the_code, vector<int>& the_guess)
