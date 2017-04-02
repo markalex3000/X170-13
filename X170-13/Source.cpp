@@ -58,9 +58,10 @@ bool yes_no(string s) {
 
 // function declarations
 void gen_code(vector<int>& the_code);
-//bool get_guess(vector<int>& the_guess);
-//int how_many_bulls(vector<int>& the_code, vector<int>& the_guess);
-//int how_many_cows(vector<int>& the_code, vector<int>& the_guess);
+bool get_guess(vector<int>& the_guess);
+bool chk_guess(vector<int>& the_guess);
+int how_many_bulls(vector<int>& the_code, vector<int>& the_guess);
+int how_many_cows(vector<int>& the_code, vector<int>& the_guess);
 void output_vector(vector<int>& vi);
 
 
@@ -72,6 +73,8 @@ int main() {
 
 	bool play_again{ true };
 	bool quiter{ false };
+	bool test_guess{ false };
+
 
 	while (play_again) {
 		cout << "Generating the code...\n";
@@ -80,20 +83,29 @@ int main() {
 		cout << "The code: ";
 		output_vector(the_code);
 
-/*		while (!quiter) {
+		
+		while (!quiter) {
+
+			cout << "Enter 4 integers ( 0 - 9 ) for your guess - no repeats: ";
 			quiter = get_guess(the_guess);
+			if (!quiter) continue;
+			test_guess = chk_guess(the_guess);
+			if (!test_guess) continue;
+			output_vector(the_guess);
+
 			bulls = how_many_bulls(the_code, the_guess);
 			cows = how_many_cows(the_code, the_guess);
 			if (bulls == 4) {
-				cout << "You win!\n")
+				cout << "You win!\n";
 				break;
 			}
 			cout << "You gueesed: ";
 			output_vector(the_guess);
 			cout << " Results: " << bulls << " Bulls\t" << cows << " Cows\n";
-			quiter = yes_no("Guess again? ");
-	}*/	
-		play_again = yes_no("Play again? ");
+			quiter = !(yes_no("Guess again? "));
+	}
+	play_again = yes_no("Play again? ");
+	quiter = { false };
 	}
 }
 
@@ -119,14 +131,72 @@ void gen_code(vector<int>& the_code) {
 	}
 	return;
 }
-/*
+
+bool get_guess(vector<int>& the_guess)
+{
+	int count{ 0 };
+	int temp{ 0 };
+	char test{ ' ' };
+
+	if (the_guess.size() != 0) the_guess.clear();
+
+	cin >> test;
+	while (test != '|') {
+		cin.putback(test);
+		if (cin >> temp) {
+			count += 1;
+			the_guess.push_back(temp);
+			cin >> test;
+		}
+		else simple_error("get_number_list: bad input...");
+	}
+	if (count != 4) {
+		cout << "\nget_guess:  too many intetgers entered\n";
+		return false;
+	}
+	else return true;
+}
+
+bool chk_guess(vector<int>& the_guess)
+{
+	for (int i = 0; i < the_guess.size();++i) {
+		if (the_guess[i] < 0 || the_guess[i] > 9) {
+			cout << " chk_guess:  integers out of range...\n";
+			return false;
+		}
+		for (int j = i+1; j < the_guess.size(); ++j) {
+			if (the_guess[i] == the_guess[j]) {
+				cout << "chk_guess: duplicate entries...\n";
+					return false;
+			}
+		}
+	}
+	return true;
+}
+
+int how_many_bulls(vector<int>& the_code, vector<int>& the_guess)
+{
+	int bulls{ 0 };
+	for (int i = 0; i < the_guess.size();++i) {
+		if (the_guess[i] == the_code[i]) bulls += 1;
+	}
+	return bulls;
+}
+
 int how_many_cows(vector<int>& the_code, vector<int>& the_guess)
 {
-	return 0;
+	int cows{ 0 };
+	for (int i = 0; i < the_guess.size();++i) {
+		for (int j = 0; j < the_code.size(); ++j) {
+			if (the_guess[i] == the_code[j] && i != j) cows += 1;
+		}
+	}
+	return cows;
 }
-*/
+
 void output_vector(vector<int>& vi)
 {
 	for (int i = 0; i < vi.size(); ++i) cout << vi[i] << " ";
+	cout << "\n";
 }
 
