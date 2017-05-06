@@ -76,7 +76,7 @@ int main() {
 	bool test_guess{ false };
 
 
-	while (play_again) {
+	while (play_again) {						//Outer loop - each loop is a new game
 		cout << "Generating the code...\n";
 		gen_code(the_code);
 
@@ -84,22 +84,30 @@ int main() {
 		output_vector(the_code);
 
 		
-		while (!quiter) {
+		while (!quiter) {						//Outer-1 loop - gets guess and checks - exits if user quits or wins
 
 			cout << "Enter 4 integers ( 0 - 9 ) for your guess - no repeats: ";
-			quiter = get_guess(the_guess);
-			if (!quiter) continue;
-			test_guess = chk_guess(the_guess);
-			if (!test_guess) continue;
-			output_vector(the_guess);
-
+			try {
+				cin.exceptions(ios_base::badbit | ios_base::failbit);
+				
+				quiter = get_guess(the_guess);
+				if (!quiter) continue;
+				test_guess = chk_guess(the_guess);
+				if (!test_guess) continue;
+			}
+			catch (exception& e) {
+				cerr << "error: " << e.what() << "\n";
+				simple_error("Caught the exception");
+				return 1;
+			}
+	
 			bulls = how_many_bulls(the_code, the_guess);
 			cows = how_many_cows(the_code, the_guess);
 			if (bulls == 4) {
 				cout << "You win!\n";
 				break;
 			}
-			cout << "You gueesed: ";
+			cout << "You guessed: ";
 			output_vector(the_guess);
 			cout << " Results: " << bulls << " Bulls\t" << cows << " Cows\n";
 			quiter = !(yes_no("Guess again? "));
@@ -141,17 +149,17 @@ bool get_guess(vector<int>& the_guess)
 	if (the_guess.size() != 0) the_guess.clear();
 
 	cin >> test;
-	while (test != '|') {
-		cin.putback(test);
+	while (test != '|') {			//This user input section is in inelegant - esp having 'cin >> test' twice.
+		cin.putback(test);			// need a better way to read in input and parse it correctly
 		if (cin >> temp) {
 			count += 1;
 			the_guess.push_back(temp);
 			cin >> test;
 		}
-		else simple_error("get_number_list: bad input...");
+		else simple_error("get_number_list: bad input...");		//inconsistnet error checking - quits here
 	}
 	if (count != 4) {
-		cout << "\nget_guess:  too many intetgers entered\n";
+		cout << "\nget_guess:  too many integers entered\n";	//inconsistent error handling - try again here
 		return false;
 	}
 	else return true;
@@ -167,7 +175,7 @@ bool chk_guess(vector<int>& the_guess)
 		for (int j = i+1; j < the_guess.size(); ++j) {
 			if (the_guess[i] == the_guess[j]) {
 				cout << "chk_guess: duplicate entries...\n";
-					return false;
+				return false;
 			}
 		}
 	}
@@ -197,6 +205,5 @@ int how_many_cows(vector<int>& the_code, vector<int>& the_guess)
 void output_vector(vector<int>& vi)
 {
 	for (int i = 0; i < vi.size(); ++i) cout << vi[i] << " ";
-	cout << "\n";
 }
 
